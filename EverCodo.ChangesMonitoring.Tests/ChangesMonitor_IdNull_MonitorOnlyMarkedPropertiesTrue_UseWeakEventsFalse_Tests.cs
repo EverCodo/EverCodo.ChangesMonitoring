@@ -1,0 +1,404 @@
+using System.Collections.ObjectModel;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace EverCodo.ChangesMonitoring.Tests;
+
+/// <summary>
+/// Tests for ChangesMonitor.Create(null, root, true, false).
+/// </summary>
+[TestClass]
+public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesTrue_UseWeakEventsFalse_Tests
+{
+    public ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesTrue_UseWeakEventsFalse_Tests()
+    {
+        _Root = NotifyingClass.CreateTreeWith3Layers();
+
+        _ChangesMonitor = ChangesMonitor.Create(null, _Root, true, false);
+        _ChangesMonitor.Changed += ChangesMonitor_Changed;
+    }
+
+    /// <summary>
+    /// Object hierarchy root.
+    /// </summary>
+    private readonly NotifyingClass _Root;
+
+    /// <summary>
+    /// Changes monitor attached to root.
+    /// </summary>
+    private readonly ChangesMonitor _ChangesMonitor;
+
+    /// <summary>
+    /// Handles Changed event from changes monitor.
+    /// </summary>
+    private void ChangesMonitor_Changed(object sender, MonitoredObjectChangedEventArgs args)
+    {
+        _Args = args;
+    }
+
+    /// <summary>
+    /// Last changed event args.
+    /// </summary>
+    private MonitoredObjectChangedEventArgs _Args;
+
+    #region Ordinary properties
+
+    /// <summary>
+    /// Test for property change.
+    /// </summary>
+    [TestMethod]
+    public void ObjectProperty_Change()
+    {
+        _Root.ObjectProperty.ObjectProperty.ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.ObjectProperty.MonitoredObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+    }
+
+    /// <summary>
+    /// Test for collection change.
+    /// </summary>
+    [TestMethod]
+    public void CollectionProperty_Change()
+    {
+        _Root.CollectionProperty[0].CollectionProperty.Clear();
+        Assert.IsNull(_Args);
+
+        _Root.CollectionProperty[0].MonitoredCollectionProperty.Clear();
+        Assert.IsNull(_Args);
+    }
+
+    #endregion
+
+    #region Not monitored properties
+
+    /// <summary>
+    /// Test for not monitored property change.
+    /// </summary>
+    [TestMethod]
+    public void NotMonitoredObjectProperty_Change()
+    {
+        _Root.NotMonitoredObjectProperty.ObjectProperty.ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.ObjectProperty.NotMonitoredObjectProperty.ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.ObjectProperty.ObjectProperty.NotMonitoredObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.NotMonitoredObjectProperty.CollectionProperty.Clear();
+        Assert.IsNull(_Args);
+
+        _Root.NotMonitoredObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+    }
+
+    /// <summary>
+    /// Test for not monitored collection change.
+    /// </summary>
+    [TestMethod]
+    public void NotMonitoredCollectionProperty_Change()
+    {
+        _Root.NotMonitoredCollectionProperty[0].CollectionProperty[0].ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.NotMonitoredCollectionProperty[0].CollectionProperty.Clear();
+        Assert.IsNull(_Args);
+
+        _Root.CollectionProperty[0].NotMonitoredCollectionProperty[0].ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.CollectionProperty[0].NotMonitoredCollectionProperty.Clear();
+        Assert.IsNull(_Args);
+
+        _Root.ObjectProperty.NotMonitoredCollectionProperty[0].ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.ObjectProperty.NotMonitoredCollectionProperty.Clear();
+        Assert.IsNull(_Args);
+
+        _Root.NotMonitoredCollectionProperty[0].ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.NotMonitoredCollectionProperty.Clear();
+        Assert.IsNull(_Args);
+    }
+
+    #endregion
+
+    #region Monitored properties (monitor identifier is not specified)
+
+    /// <summary>
+    /// Test for monitored object property change.
+    /// </summary>
+    [TestMethod]
+    public void MonitoredObjectProperty_Change()
+    {
+        _Root.MonitoredObjectProperty.MonitoredObjectProperty.MonitoredObjectProperty = new NotifyingClass();
+        Assert.IsNotNull(_Args);
+        Assert.AreSame(_Root.MonitoredObjectProperty.MonitoredObjectProperty, _Args.ChangedObject);
+    }
+
+    /// <summary>
+    /// Test for monitored collection change.
+    /// </summary>
+    [TestMethod]
+    public void MonitoredCollectionProperty_Change()
+    {
+        _Root.MonitoredCollectionProperty[0].MonitoredCollectionProperty[0].ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.MonitoredCollectionProperty[0].MonitoredCollectionProperty[0].MonitoredObjectProperty = new NotifyingClass();
+        Assert.IsNotNull(_Args);
+        Assert.AreSame(_Root.MonitoredCollectionProperty[0].MonitoredCollectionProperty[0], _Args.ChangedObject);
+
+        _Args = null;
+        _Root.MonitoredCollectionProperty[0].MonitoredCollectionProperty.Clear();
+        Assert.IsNotNull(_Args);
+        Assert.AreSame(_Root.MonitoredCollectionProperty[0].MonitoredCollectionProperty, _Args.ChangedObject);
+    }
+
+    #endregion
+
+    #region Monitored properties (monitor identifier is "Id1")
+
+    /// <summary>
+    /// Test for monitored object property change.
+    /// </summary>
+    [TestMethod]
+    public void MonitoredId1ObjectProperty_Change()
+    {
+        _Root.MonitoredId1ObjectProperty.MonitoredId1ObjectProperty.MonitoredId1ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.MonitoredId1ObjectProperty.MonitoredId1ObjectProperty.ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+    }
+
+    /// <summary>
+    /// Test for monitored collection change.
+    /// </summary>
+    [TestMethod]
+    public void MonitoredId1CollectionProperty_Change()
+    {
+        _Root.MonitoredId1CollectionProperty[0].MonitoredId1CollectionProperty[0].ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.MonitoredId1CollectionProperty[0].MonitoredId1CollectionProperty.Clear();
+        Assert.IsNull(_Args);
+    }
+
+    #endregion
+
+    #region Monitored properties (monitor identifier is "Id2")
+
+    /// <summary>
+    /// Test for monitored object property change.
+    /// </summary>
+    [TestMethod]
+    public void MonitoredId2ObjectProperty_Change()
+    {
+        _Root.MonitoredId2ObjectProperty.MonitoredId2ObjectProperty.MonitoredId2ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.MonitoredId2ObjectProperty.MonitoredId2ObjectProperty.ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+    }
+
+    /// <summary>
+    /// Test for monitored collection change.
+    /// </summary>
+    [TestMethod]
+    public void MonitoredId2CollectionProperty_Change()
+    {
+        _Root.MonitoredId2CollectionProperty[0].MonitoredId2CollectionProperty[0].ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.MonitoredId2CollectionProperty[0].MonitoredId2CollectionProperty.Clear();
+        Assert.IsNull(_Args);
+    }
+
+    #endregion
+
+    #region Monitored properties (monitor identifiers are "1" and "2")
+
+    /// <summary>
+    /// Test for monitored object property change.
+    /// </summary>
+    [TestMethod]
+    public void MonitoredId1AndId2ObjectProperty_Change()
+    {
+        _Root.MonitoredId1AndId2ObjectProperty.MonitoredId1AndId2ObjectProperty.MonitoredId1AndId2ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+    }
+
+    /// <summary>
+    /// Test for monitored collection change.
+    /// </summary>
+    [TestMethod]
+    public void MonitoredId1AndId2CollectionProperty_Change()
+    {
+        _Root.MonitoredId1AndId2CollectionProperty[0].MonitoredId1AndId2CollectionProperty[0].ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.MonitoredId1AndId2CollectionProperty[0].MonitoredId1AndId2CollectionProperty.Clear();
+        Assert.IsNull(_Args);
+    }
+
+    #endregion
+
+    #region Monitored properties (without sublevels)
+
+    /// <summary>
+    /// Test for object property change (without sublevels).
+    /// </summary>
+    [TestMethod]
+    public void MonitoredWithoutSublevelsObjectProperty_Change()
+    {
+        _Root.MonitoredWithoutSublevelsObjectProperty.ObjectProperty.ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.MonitoredWithoutSublevelsObjectProperty.ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.MonitoredWithoutSublevelsObjectProperty = new NotifyingClass();
+        Assert.IsNotNull(_Args);
+        Assert.AreSame(_Root, _Args.ChangedObject);
+    }
+
+    /// <summary>
+    /// Test for collection change (without sublevels).
+    /// </summary>
+    [TestMethod]
+    public void MonitoredWithoutSublevelsCollectionProperty_Change()
+    {
+        _Root.MonitoredWithoutSublevelsCollectionProperty[0].CollectionProperty[0].ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.MonitoredWithoutSublevelsCollectionProperty[0].CollectionProperty.Clear();
+        Assert.IsNull(_Args);
+
+        _Root.MonitoredWithoutSublevelsCollectionProperty[0].ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.MonitoredWithoutSublevelsCollectionProperty.Clear();
+        Assert.IsNotNull(_Args);
+        Assert.AreSame(_Root.MonitoredWithoutSublevelsCollectionProperty, _Args.ChangedObject);
+    }
+
+    #endregion
+
+    #region Monitored properties (sublevels only)
+
+    /// <summary>
+    /// Test for object property change (sublevels only).
+    /// </summary>
+    [TestMethod]
+    public void MonitoredSublevelsOnlyObjectProperty_Change()
+    {
+        _Root.MonitoredSublevelsOnlyObjectProperty.ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.MonitoredSublevelsOnlyObjectProperty.MonitoredObjectProperty = new NotifyingClass();
+        Assert.IsNotNull(_Args);
+        Assert.AreSame(_Root.MonitoredSublevelsOnlyObjectProperty, _Args.ChangedObject);
+
+        _Args = null;
+        _Root.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty.ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty.MonitoredObjectProperty = new NotifyingClass();
+        Assert.IsNotNull(_Args);
+        Assert.AreSame(_Root.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty, _Args.ChangedObject);
+
+        _Args = null;
+        _Root.MonitoredSublevelsOnlyObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+    }
+
+    /// <summary>
+    /// Test for most nested object property change after top level change (sublevels only).
+    /// </summary>
+    [TestMethod]
+    public void MonitoredSublevelsOnlyObjectProperty_NestedChangeAfterTopLevelChange()
+    {
+        _Root.MonitoredSublevelsOnlyObjectProperty = new NotifyingClass
+        {
+            MonitoredSublevelsOnlyObjectProperty = new NotifyingClass()
+        };
+
+        _Args = null;
+        _Root.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty.ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty.MonitoredObjectProperty = new NotifyingClass();
+        Assert.IsNotNull(_Args);
+        Assert.AreSame(_Root.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty, _Args.ChangedObject);
+    }
+
+    /// <summary>
+    /// Test for collection change (sublevels only).
+    /// </summary>
+    [TestMethod]
+    public void MonitoredSublevelsOnlyCollectionProperty_Change()
+    {
+        _Root.MonitoredSublevelsOnlyCollectionProperty[0].MonitoredSublevelsOnlyCollectionProperty.Clear();
+        Assert.IsNull(_Args);
+
+        _Root.MonitoredSublevelsOnlyCollectionProperty[0].MonitoredSublevelsOnlyCollectionProperty = new ObservableCollection<NotifyingClass>();
+        Assert.IsNull(_Args);
+
+        _Root.MonitoredSublevelsOnlyCollectionProperty[0].CollectionProperty.Clear();
+        Assert.IsNull(_Args);
+
+        _Root.MonitoredSublevelsOnlyCollectionProperty[0].MonitoredCollectionProperty.Clear();
+        Assert.IsNotNull(_Args);
+        Assert.AreSame(_Root.MonitoredSublevelsOnlyCollectionProperty[0].MonitoredCollectionProperty, _Args.ChangedObject);
+
+        _Args = null;
+        _Root.MonitoredSublevelsOnlyCollectionProperty.Clear();
+        Assert.IsNull(_Args);
+    }
+
+    /// <summary>
+    /// Test for nested collection change after top level collection change (sublevels only).
+    /// </summary>
+    [TestMethod]
+    public void MonitoredSublevelsOnlyCollectionProperty_NestedChangeAfterTopLevelChange()
+    {
+        _Root.MonitoredSublevelsOnlyCollectionProperty = new ObservableCollection<NotifyingClass>
+        {
+            new NotifyingClass
+            {
+                MonitoredSublevelsOnlyCollectionProperty = new ObservableCollection<NotifyingClass>
+                {
+                    new NotifyingClass()
+                }
+            }
+        };
+
+        _Args = null;
+        _Root.MonitoredSublevelsOnlyCollectionProperty[0].MonitoredSublevelsOnlyCollectionProperty[0].ObjectProperty = new NotifyingClass();
+        Assert.IsNull(_Args);
+
+        _Root.MonitoredSublevelsOnlyCollectionProperty[0].MonitoredSublevelsOnlyCollectionProperty[0].MonitoredObjectProperty = new NotifyingClass();
+        Assert.IsNotNull(_Args);
+        Assert.AreSame(_Root.MonitoredSublevelsOnlyCollectionProperty[0].MonitoredSublevelsOnlyCollectionProperty[0], _Args.ChangedObject);
+
+        _Args = null;
+        _Root.MonitoredSublevelsOnlyCollectionProperty[0].MonitoredSublevelsOnlyCollectionProperty.Clear();
+        Assert.IsNull(_Args);
+    }
+
+    #endregion
+}

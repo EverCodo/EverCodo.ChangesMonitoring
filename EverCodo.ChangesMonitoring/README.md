@@ -1,0 +1,1 @@
+Powerful framework to handle PropertyChanged and CollectionChanged events on arbitrary hierarchy of nested objects and collections.
