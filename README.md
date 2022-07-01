@@ -146,8 +146,8 @@ Use one of the `ChangesMonitor.Create()` methods on the root object to create ch
 ```csharp
 public class ChangesMonitor
 {
-    public static ChangesMonitor Create(object root)
-    public static ChangesMonitor Create(object root, string id, bool monitorOnlyMarkedProperties, bool useWeakEvents)
+    public static ChangesMonitor Create(object root) { /*...*/ }
+    public static ChangesMonitor Create(object root, string id, bool monitorOnlyMarkedProperties, bool useWeakEvents) { /*...*/ }
 }
 ```
 
@@ -160,16 +160,16 @@ public class ChangesMonitor
 |`useWeakEvents`|Specifies if changes monitor will use weak events when subscribes to monitored objects.|
 
 ### \[MonitorChanges\] attribute
-Use `[MonitorChanges]` on object properties to control how changes of those properties should be monitored.
+Use `[MonitorChanges]` attribute on object properties to control how changes of those properties should be monitored.
 
 #### Parameters
 |Parameter|Description|
 |---|---|
-|Id|Identifier of the associated changes monitor. Default is `null`.|
-|DoNotMonitor|Specifies if changes should not be monitored either for the property itself or for nested objects. Default is `false`.|
-|MonitorProperty|Specifies if changes of the property iteself should be monitored. Default is `true`.|
-|MonitorSublevels|Specifies if changes of nested objects should be monitored. Default is `true`.|
-|MonitorOnlyMarkedProperties|Specifies if only properties marked with `[MonitorChanges]` attribue should be monitored on sublevels. This parameter can be used to change strictness of monitoring behavior for specific property sublevels.|
+|`Id`|Identifier of the associated changes monitor. Default is `null`.|
+|`DoNotMonitor`|Specifies if changes should not be monitored either for the property itself or for nested objects. Default is `false`.|
+|`MonitorProperty`|Specifies if changes of the property iteself should be monitored. Default is `true`.|
+|`MonitorSublevels`|Specifies if changes of nested objects should be monitored. Default is `true`.|
+|`MonitorOnlyMarkedProperties`|Specifies if only properties marked with `[MonitorChanges]` attribue should be monitored on sublevels. This parameter can be used to change strictness of monitoring behavior for specific property sublevels.|
 
 ### Property monitoring behavior variety
 Several changes monitors to illustrate the idea:
