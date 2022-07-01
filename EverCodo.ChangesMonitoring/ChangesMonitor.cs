@@ -19,18 +19,19 @@ namespace EverCodo.ChangesMonitoring
         /// <returns>Changes monitor for object.</returns>
         public static ChangesMonitor Create(object root)
         {
-            return Create(null, root, false, false);
+            return Create(root, null, false, false);
         }
 
         /// <summary>
         /// Creates proper changes monitor for object.
         /// </summary>
-        /// <param name="id">Id of monitor.</param>
         /// <param name="root">Object to monitor.</param>
+        /// <param name="id">Id of monitor.</param>
         /// <param name="monitorOnlyMarkedProperties">Specifies if only properties marked with MonitorChangesAttribute should be monitored.</param>
         /// <param name="useWeakEvents">Specifies if changes monitor will use weak events when subscribes to monitored objects.</param>
         /// <returns>Changes monitor for object.</returns>
-        public static ChangesMonitor Create(string id, object root, bool monitorOnlyMarkedProperties, bool useWeakEvents)
+        public static ChangesMonitor Create(object root, string id, bool monitorOnlyMarkedProperties,
+            bool useWeakEvents)
         {
             switch (root)
             {
@@ -135,6 +136,38 @@ namespace EverCodo.ChangesMonitoring
         public string PropertyName { get; }
 
         /// <summary>
+        /// Composed property path from topmost root to this changes monitor.
+        /// </summary>
+        public string _PropertyPath;
+
+        /// <summary>
+        /// Composed property path from topmost root to this changes monitor.
+        /// </summary>
+        /// <remarks>
+        /// 1. For topmost root monitor it will be String.Empty.
+        /// 2. For each level it will add ".PropertyName" (for property) or ".Item[]" (for item inside a collection).
+        /// 3. Example: ".Children.Item[].Metadata.Tags"
+        /// </remarks>
+        public string PropertyPath
+        {
+            get
+            {
+                if (_PropertyPath == null)
+                {
+                    var pathBuilder = new StringBuilder();
+                    foreach (var changesMonitor in GetHierarchyMonitors())
+                    {
+                        pathBuilder.Insert(0, changesMonitor.PropertyName != null ? "." + changesMonitor.PropertyName : null);
+                    }
+
+                    _PropertyPath = pathBuilder.ToString();
+                }
+
+                return _PropertyPath;
+            }
+        }
+
+        /// <summary>
         /// Specifies if only properties marked with MonitorChangesAttribute should be monitored.
         /// </summary>
         public bool MonitorOnlyMarkedProperties { get; }
@@ -201,7 +234,7 @@ namespace EverCodo.ChangesMonitoring
         /// <summary>
         /// Provides enumeration to hierarchy monitors from current to the topmost.
         /// </summary>
-        /// <returns>Enumeration with monitors from current to topmost of the whole hierarchy.</returns>
+        /// <returns>Enumeration with monitors from current to the topmost of the whole hierarchy.</returns>
         public IEnumerable<ChangesMonitor> GetHierarchyMonitors()
         {
             var changesMonitor = this;
@@ -240,26 +273,6 @@ namespace EverCodo.ChangesMonitoring
         public bool IsMonitoringInsideObjectOfType(Type rootType)
         {
             return GetHierarchyRoots().Any(rootType.IsInstanceOfType);
-        }
-
-        /// <summary>
-        /// Composes property path from topmost root to this changes monitor.
-        /// </summary>
-        /// <returns>Composed property path.</returns>
-        /// <remarks>
-        /// 1. For topmost root changes monitor it will be String.Empty.
-        /// 2. For each level it will add ".PropertyName" (for property) or ".Item[]" (for collection item).
-        /// 3. Example: ".Persons.Item[].Address"
-        /// </remarks>
-        public string GetPropertyPath()
-        {
-            var pathBuilder = new StringBuilder();
-            foreach (var changesMonitor in GetHierarchyMonitors())
-            {
-                pathBuilder.Insert(0, changesMonitor.PropertyName != null ? "." + changesMonitor.PropertyName : null);
-            }
-
-            return pathBuilder.ToString();
         }
 
         #endregion

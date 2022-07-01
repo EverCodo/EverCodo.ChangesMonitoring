@@ -11,16 +11,16 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
 {
     public ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEventsTrue_Tests()
     {
-        _Root = NotifyingClass.CreateTreeWith3Layers();
+        _Root = NotifyingObject.CreateTreeWith3Layers();
 
-        _ChangesMonitor = ChangesMonitor.Create(null, _Root, false, true);
+        _ChangesMonitor = ChangesMonitor.Create(_Root, null, false, true);
         _ChangesMonitor.Changed += ChangesMonitor_Changed;
     }
 
     /// <summary>
     /// Object hierarchy root.
     /// </summary>
-    private readonly NotifyingClass _Root;
+    private readonly NotifyingObject _Root;
 
     /// <summary>
     /// Changes monitor attached to root.
@@ -58,7 +58,7 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
 
         Assert.IsTrue(changesMonitorReference.IsAlive);
 
-        _Root.ObjectProperty.ObjectProperty.ObjectProperty = new NotifyingClass();
+        _Root.ObjectProperty.ObjectProperty.ObjectProperty = new NotifyingObject();
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root.ObjectProperty.ObjectProperty, _Args.ChangedObject);
 
@@ -67,7 +67,7 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
         GC.WaitForPendingFinalizers();
         Assert.IsFalse(changesMonitorReference.IsAlive);
 
-        _Root.ObjectProperty.ObjectProperty.ObjectProperty = new NotifyingClass();
+        _Root.ObjectProperty.ObjectProperty.ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
     }
 

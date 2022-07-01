@@ -1,9 +1,10 @@
 [![NuGet Status](https://img.shields.io/nuget/v/EverCodo.ChangesMonitoring.svg)](https://www.nuget.org/packages/EverCodo.ChangesMonitoring/)
 
 # EverCodo.ChangesMonitoring
-Powerful framework to handle PropertyChanged and CollectionChanged events on any hierarchy of nested objects and collections.
+A powerful framework to handle PropertyChanged and CollectionChanged events on arbitrary hierarchy of nested objects and collections.
 
-## Data model
+
+## Sample data model
 ```csharp
 // INotifyPropertyChanged implementation is omitted to keep the example simple
 

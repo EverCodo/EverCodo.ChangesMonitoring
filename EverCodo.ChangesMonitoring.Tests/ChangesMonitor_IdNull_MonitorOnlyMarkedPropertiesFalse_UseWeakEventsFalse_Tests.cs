@@ -8,23 +8,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace EverCodo.ChangesMonitoring.Tests;
 
 /// <summary>
-/// Tests for ChangesMonitor.Create(root) which is ChangesMonitor.Create(null, root, false, false).
+/// Tests for ChangesMonitor.Create(root) which is equivalent of ChangesMonitor.Create(null, root, false, false).
 /// </summary>
-/// <remarks>
-/// + ChangesMonitor.Create(null, root, false, false);
-/// + ChangesMonitor.Create(null, root, false, true);
-/// + ChangesMonitor.Create(null, root, true, false);
-/// + ChangesMonitor.Create("Id1", root, false, false);
-/// + ChangesMonitor.Create("Id1", root, true, false);
-/// + ChangesMonitor.Create("Id2", root, false, false);
-/// + ChangesMonitor.Create("Id2", root, true, false);
-/// </remarks>
 [TestClass]
 public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEventsFalse_Tests
 {
     public ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEventsFalse_Tests()
     {
-        _Root = NotifyingClass.CreateTreeWith3Layers();
+        _Root = NotifyingObject.CreateTreeWith3Layers();
 
         _ChangesMonitor = ChangesMonitor.Create(_Root);
         _ChangesMonitor.Changed += ChangesMonitor_Changed;
@@ -33,7 +24,7 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     /// <summary>
     /// Object hierarchy root.
     /// </summary>
-    private readonly NotifyingClass _Root;
+    private readonly NotifyingObject _Root;
 
     /// <summary>
     /// Changes monitor attached to root.
@@ -64,25 +55,25 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
         _ChangesMonitor.SuppressNotification();
         Assert.IsTrue(_ChangesMonitor.IsNotificationSuppressed);
 
-        _Root.ObjectProperty = new NotifyingClass();
+        _Root.ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
         _ChangesMonitor.SuppressNotification();
         Assert.IsTrue(_ChangesMonitor.IsNotificationSuppressed);
 
-        _Root.ObjectProperty = new NotifyingClass();
+        _Root.ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
         _ChangesMonitor.ResumeNotification();
         Assert.IsTrue(_ChangesMonitor.IsNotificationSuppressed);
 
-        _Root.ObjectProperty = new NotifyingClass();
+        _Root.ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
         _ChangesMonitor.ResumeNotification();
         Assert.IsFalse(_ChangesMonitor.IsNotificationSuppressed);
 
-        _Root.ObjectProperty = new NotifyingClass();
+        _Root.ObjectProperty = new NotifyingObject();
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root, _Args.ChangedObject);
     }
@@ -97,17 +88,17 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     [TestMethod]
     public void ObjectProperty_TopLevelChange()
     {
-        _Root.ObjectProperty = new NotifyingClass();
+        _Root.ObjectProperty = new NotifyingObject();
 
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root, _Args.ChangedObject);
         Assert.AreSame(_Args.ChangedObject, _Args.Monitor.Root);
         Assert.IsInstanceOfType(_Args.ChangedEventArgs, typeof(PropertyChangedEventArgs));
-        Assert.AreEqual(nameof(NotifyingClass.ObjectProperty), ((PropertyChangedEventArgs)_Args.ChangedEventArgs).PropertyName);
-        Assert.AreEqual(String.Empty, _Args.Monitor.GetPropertyPath());
+        Assert.AreEqual(nameof(NotifyingObject.ObjectProperty), ((PropertyChangedEventArgs)_Args.ChangedEventArgs).PropertyName);
+        Assert.AreEqual(String.Empty, _Args.Monitor.PropertyPath);
 
         Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObject(_Root));
-        Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObjectOfType(typeof(NotifyingClass)));
+        Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObjectOfType(typeof(NotifyingObject)));
 
         var hierarchyRoots = _Args.Monitor.GetHierarchyRoots().ToList();
         Assert.AreSame(_Root, hierarchyRoots[0]);
@@ -119,19 +110,19 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     [TestMethod]
     public void ObjectProperty_NestedChange()
     {
-        _Root.ObjectProperty.ObjectProperty.ObjectProperty = new NotifyingClass();
+        _Root.ObjectProperty.ObjectProperty.ObjectProperty = new NotifyingObject();
 
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root.ObjectProperty.ObjectProperty, _Args.ChangedObject);
         Assert.AreSame(_Args.ChangedObject, _Args.Monitor.Root);
         Assert.IsInstanceOfType(_Args.ChangedEventArgs, typeof(PropertyChangedEventArgs));
-        Assert.AreEqual(nameof(NotifyingClass.ObjectProperty), ((PropertyChangedEventArgs)_Args.ChangedEventArgs).PropertyName);
-        Assert.AreEqual($".{nameof(NotifyingClass.ObjectProperty)}.{nameof(NotifyingClass.ObjectProperty)}", _Args.Monitor.GetPropertyPath());
+        Assert.AreEqual(nameof(NotifyingObject.ObjectProperty), ((PropertyChangedEventArgs)_Args.ChangedEventArgs).PropertyName);
+        Assert.AreEqual($".{nameof(NotifyingObject.ObjectProperty)}.{nameof(NotifyingObject.ObjectProperty)}", _Args.Monitor.PropertyPath);
             
         Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObject(_Root.ObjectProperty.ObjectProperty));
         Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObject(_Root.ObjectProperty));
         Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObject(_Root));
-        Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObjectOfType(typeof(NotifyingClass)));
+        Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObjectOfType(typeof(NotifyingObject)));
 
         var hierarchyRoots = _Args.Monitor.GetHierarchyRoots().ToList();
         Assert.AreSame(_Root.ObjectProperty.ObjectProperty, hierarchyRoots[0]);
@@ -145,26 +136,26 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     [TestMethod]
     public void ObjectProperty_NestedChangeAfterTopLevelChange()
     {
-        _Root.ObjectProperty = new NotifyingClass
+        _Root.ObjectProperty = new NotifyingObject
         {
-            ObjectProperty = new NotifyingClass()
+            ObjectProperty = new NotifyingObject()
         };
 
         _Args = null;
-        _Root.ObjectProperty.ObjectProperty.ObjectProperty = new NotifyingClass();
+        _Root.ObjectProperty.ObjectProperty.ObjectProperty = new NotifyingObject();
 
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root.ObjectProperty.ObjectProperty, _Args.ChangedObject);
         Assert.AreSame(_Args.ChangedObject, _Args.Monitor.Root);
         Assert.IsInstanceOfType(_Args.ChangedEventArgs, typeof(PropertyChangedEventArgs));
-        Assert.AreEqual(nameof(NotifyingClass.ObjectProperty), ((PropertyChangedEventArgs)_Args.ChangedEventArgs).PropertyName);
-        Assert.AreEqual($".{nameof(NotifyingClass.ObjectProperty)}.{nameof(NotifyingClass.ObjectProperty)}",
-            _Args.Monitor.GetPropertyPath());
+        Assert.AreEqual(nameof(NotifyingObject.ObjectProperty), ((PropertyChangedEventArgs)_Args.ChangedEventArgs).PropertyName);
+        Assert.AreEqual($".{nameof(NotifyingObject.ObjectProperty)}.{nameof(NotifyingObject.ObjectProperty)}",
+            _Args.Monitor.PropertyPath);
 
         Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObject(_Root.ObjectProperty.ObjectProperty));
         Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObject(_Root.ObjectProperty));
         Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObject(_Root));
-        Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObjectOfType(typeof(NotifyingClass)));
+        Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObjectOfType(typeof(NotifyingObject)));
 
         var hierarchyRoots = _Args.Monitor.GetHierarchyRoots().ToList();
         Assert.AreSame(_Root.ObjectProperty.ObjectProperty, hierarchyRoots[0]);
@@ -179,13 +170,13 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     public void ObjectProperty_NoMonitoringInsideOldValue()
     {
         var prevObjectPropertyValue = _Root.ObjectProperty;
-        _Root.ObjectProperty = new NotifyingClass();
+        _Root.ObjectProperty = new NotifyingObject();
 
         _Args = null;
-        prevObjectPropertyValue.ObjectProperty.ObjectProperty = new NotifyingClass();
+        prevObjectPropertyValue.ObjectProperty.ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
-        prevObjectPropertyValue.ObjectProperty = new NotifyingClass();
+        prevObjectPropertyValue.ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
     }
 
@@ -197,13 +188,13 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     {
         _ChangesMonitor.Dispose();
 
-        _Root.ObjectProperty.ObjectProperty.ObjectProperty = new NotifyingClass();
+        _Root.ObjectProperty.ObjectProperty.ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
-        _Root.ObjectProperty.ObjectProperty = new NotifyingClass();
+        _Root.ObjectProperty.ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
-        _Root.ObjectProperty = new NotifyingClass();
+        _Root.ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
     }
 
@@ -220,14 +211,14 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
         Assert.AreSame(_Args.ChangedObject, _Args.Monitor.Root);
         Assert.IsInstanceOfType(_Args.ChangedEventArgs, typeof(NotifyCollectionChangedEventArgs));
         Assert.AreEqual(NotifyCollectionChangedAction.Reset, ((NotifyCollectionChangedEventArgs)_Args.ChangedEventArgs).Action);
-        Assert.AreEqual($".{nameof(NotifyingClass.CollectionProperty)}.Item[].{nameof(NotifyingClass.CollectionProperty)}", _Args.Monitor.GetPropertyPath());
+        Assert.AreEqual($".{nameof(NotifyingObject.CollectionProperty)}.Item[].{nameof(NotifyingObject.CollectionProperty)}", _Args.Monitor.PropertyPath);
 
         Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObject(_Root.CollectionProperty[0].CollectionProperty));
         Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObject(_Root.CollectionProperty[0]));
         Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObject(_Root.CollectionProperty));
         Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObject(_Root));
-        Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObjectOfType(typeof(ObservableCollection<NotifyingClass>)));
-        Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObjectOfType(typeof(NotifyingClass)));
+        Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObjectOfType(typeof(ObservableCollection<NotifyingObject>)));
+        Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObjectOfType(typeof(NotifyingObject)));
 
         var hierarchyRoots = _Args.Monitor.GetHierarchyRoots().ToList();
         Assert.AreSame(_Root.CollectionProperty[0].CollectionProperty, hierarchyRoots[0]);
@@ -242,7 +233,7 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     [TestMethod]
     public void CollectionProperty_NestedChange_Add()
     {
-        var newItem = new NotifyingClass();
+        var newItem = new NotifyingObject();
         _Root.CollectionProperty[0].CollectionProperty.Add(newItem);
 
         Assert.IsNotNull(_Args);
@@ -277,7 +268,7 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     {
         var nestedCollection = _Root.CollectionProperty[0].CollectionProperty;
         var oldItem = nestedCollection[1];
-        var newItem = new NotifyingClass();
+        var newItem = new NotifyingObject();
         nestedCollection[1] = newItem;
 
         Assert.IsNotNull(_Args);
@@ -312,13 +303,13 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     [TestMethod]
     public void CollectionProperty_NestedChangeAfterTopLevelChange()
     {
-        _Root.CollectionProperty = new ObservableCollection<NotifyingClass>
+        _Root.CollectionProperty = new ObservableCollection<NotifyingObject>
         {
-            new NotifyingClass
+            new NotifyingObject
             {
-                CollectionProperty = new ObservableCollection<NotifyingClass>
+                CollectionProperty = new ObservableCollection<NotifyingObject>
                 {
-                    new NotifyingClass()
+                    new NotifyingObject()
                 }
             }
         };
@@ -331,14 +322,14 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
         Assert.AreSame(_Args.ChangedObject, _Args.Monitor.Root);
         Assert.IsInstanceOfType(_Args.ChangedEventArgs, typeof(NotifyCollectionChangedEventArgs));
         Assert.AreEqual(NotifyCollectionChangedAction.Reset, ((NotifyCollectionChangedEventArgs)_Args.ChangedEventArgs).Action);
-        Assert.AreEqual($".{nameof(NotifyingClass.CollectionProperty)}.Item[].{nameof(NotifyingClass.CollectionProperty)}", _Args.Monitor.GetPropertyPath());
+        Assert.AreEqual($".{nameof(NotifyingObject.CollectionProperty)}.Item[].{nameof(NotifyingObject.CollectionProperty)}", _Args.Monitor.PropertyPath);
 
         Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObject(_Root.CollectionProperty[0].CollectionProperty));
         Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObject(_Root.CollectionProperty[0]));
         Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObject(_Root.CollectionProperty));
         Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObject(_Root));
-        Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObjectOfType(typeof(ObservableCollection<NotifyingClass>)));
-        Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObjectOfType(typeof(NotifyingClass)));
+        Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObjectOfType(typeof(ObservableCollection<NotifyingObject>)));
+        Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObjectOfType(typeof(NotifyingObject)));
 
         var hierarchyRoots = _Args.Monitor.GetHierarchyRoots().ToList();
         Assert.AreSame(_Root.CollectionProperty[0].CollectionProperty, hierarchyRoots[0]);
@@ -354,7 +345,7 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     public void CollectionProperty_NoMonitoringInsideOldValue()
     {
         var prevCollectionPropertyValue = _Root.CollectionProperty;
-        _Root.CollectionProperty = new ObservableCollection<NotifyingClass>();
+        _Root.CollectionProperty = new ObservableCollection<NotifyingObject>();
 
         _Args = null;
         prevCollectionPropertyValue[0].CollectionProperty.Clear();
@@ -392,22 +383,22 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     [TestMethod]
     public void CollectionProperty_ObjectProperty_NestedChange()
     {
-        _Root.CollectionProperty[0].CollectionProperty[0].ObjectProperty = new NotifyingClass();
+        _Root.CollectionProperty[0].CollectionProperty[0].ObjectProperty = new NotifyingObject();
 
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root.CollectionProperty[0].CollectionProperty[0], _Args.ChangedObject);
         Assert.AreSame(_Args.ChangedObject, _Args.Monitor.Root);
         Assert.IsInstanceOfType(_Args.ChangedEventArgs, typeof(PropertyChangedEventArgs));
-        Assert.AreEqual(nameof(NotifyingClass.ObjectProperty), ((PropertyChangedEventArgs)_Args.ChangedEventArgs).PropertyName);
-        Assert.AreEqual($".{nameof(NotifyingClass.CollectionProperty)}.Item[].{nameof(NotifyingClass.CollectionProperty)}.Item[]", _Args.Monitor.GetPropertyPath());
+        Assert.AreEqual(nameof(NotifyingObject.ObjectProperty), ((PropertyChangedEventArgs)_Args.ChangedEventArgs).PropertyName);
+        Assert.AreEqual($".{nameof(NotifyingObject.CollectionProperty)}.Item[].{nameof(NotifyingObject.CollectionProperty)}.Item[]", _Args.Monitor.PropertyPath);
 
         Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObject(_Root.CollectionProperty[0].CollectionProperty[0]));
         Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObject(_Root.CollectionProperty[0].CollectionProperty));
         Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObject(_Root.CollectionProperty[0]));
         Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObject(_Root.CollectionProperty));
         Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObject(_Root));
-        Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObjectOfType(typeof(ObservableCollection<NotifyingClass>)));
-        Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObjectOfType(typeof(NotifyingClass)));
+        Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObjectOfType(typeof(ObservableCollection<NotifyingObject>)));
+        Assert.IsTrue(_Args.Monitor.IsMonitoringInsideObjectOfType(typeof(NotifyingObject)));
 
         var hierarchyRoots = _Args.Monitor.GetHierarchyRoots().ToList();
         Assert.AreSame(_Root.CollectionProperty[0].CollectionProperty[0], hierarchyRoots[0]);
@@ -427,19 +418,19 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     [TestMethod]
     public void NotMonitoredObjectProperty_Change()
     {
-        _Root.NotMonitoredObjectProperty.ObjectProperty.ObjectProperty = new NotifyingClass();
+        _Root.NotMonitoredObjectProperty.ObjectProperty.ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
-        _Root.ObjectProperty.NotMonitoredObjectProperty.ObjectProperty = new NotifyingClass();
+        _Root.ObjectProperty.NotMonitoredObjectProperty.ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
-        _Root.ObjectProperty.ObjectProperty.NotMonitoredObjectProperty = new NotifyingClass();
+        _Root.ObjectProperty.ObjectProperty.NotMonitoredObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
         _Root.NotMonitoredObjectProperty.CollectionProperty.Clear();
         Assert.IsNull(_Args);
 
-        _Root.NotMonitoredObjectProperty = new NotifyingClass();
+        _Root.NotMonitoredObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
     }
 
@@ -449,25 +440,25 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     [TestMethod]
     public void NotMonitoredCollectionProperty_Change()
     {
-        _Root.NotMonitoredCollectionProperty[0].CollectionProperty[0].ObjectProperty = new NotifyingClass();
+        _Root.NotMonitoredCollectionProperty[0].CollectionProperty[0].ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
         _Root.NotMonitoredCollectionProperty[0].CollectionProperty.Clear();
         Assert.IsNull(_Args);
 
-        _Root.CollectionProperty[0].NotMonitoredCollectionProperty[0].ObjectProperty = new NotifyingClass();
+        _Root.CollectionProperty[0].NotMonitoredCollectionProperty[0].ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
         _Root.CollectionProperty[0].NotMonitoredCollectionProperty.Clear();
         Assert.IsNull(_Args);
 
-        _Root.ObjectProperty.NotMonitoredCollectionProperty[0].ObjectProperty = new NotifyingClass();
+        _Root.ObjectProperty.NotMonitoredCollectionProperty[0].ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
         _Root.ObjectProperty.NotMonitoredCollectionProperty.Clear();
         Assert.IsNull(_Args);
 
-        _Root.NotMonitoredCollectionProperty[0].ObjectProperty = new NotifyingClass();
+        _Root.NotMonitoredCollectionProperty[0].ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
         _Root.NotMonitoredCollectionProperty.Clear();
@@ -484,7 +475,7 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     [TestMethod]
     public void MonitoredObjectProperty_Change()
     {
-        _Root.MonitoredObjectProperty.MonitoredObjectProperty.MonitoredObjectProperty = new NotifyingClass();
+        _Root.MonitoredObjectProperty.MonitoredObjectProperty.MonitoredObjectProperty = new NotifyingObject();
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root.MonitoredObjectProperty.MonitoredObjectProperty, _Args.ChangedObject);
     }
@@ -495,7 +486,7 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     [TestMethod]
     public void MonitoredCollectionProperty_Change()
     {
-        _Root.MonitoredCollectionProperty[0].MonitoredCollectionProperty[0].ObjectProperty = new NotifyingClass();
+        _Root.MonitoredCollectionProperty[0].MonitoredCollectionProperty[0].ObjectProperty = new NotifyingObject();
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root.MonitoredCollectionProperty[0].MonitoredCollectionProperty[0], _Args.ChangedObject);
 
@@ -515,12 +506,12 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     [TestMethod]
     public void MonitoredId1ObjectProperty_Change()
     {
-        _Root.MonitoredId1ObjectProperty.MonitoredId1ObjectProperty.MonitoredId1ObjectProperty = new NotifyingClass();
+        _Root.MonitoredId1ObjectProperty.MonitoredId1ObjectProperty.MonitoredId1ObjectProperty = new NotifyingObject();
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root.MonitoredId1ObjectProperty.MonitoredId1ObjectProperty, _Args.ChangedObject);
 
         _Args = null;
-        _Root.MonitoredId1ObjectProperty.MonitoredId1ObjectProperty.ObjectProperty = new NotifyingClass();
+        _Root.MonitoredId1ObjectProperty.MonitoredId1ObjectProperty.ObjectProperty = new NotifyingObject();
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root.MonitoredId1ObjectProperty.MonitoredId1ObjectProperty, _Args.ChangedObject);
     }
@@ -531,7 +522,7 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     [TestMethod]
     public void MonitoredId1CollectionProperty_Change()
     {
-        _Root.MonitoredId1CollectionProperty[0].MonitoredId1CollectionProperty[0].ObjectProperty = new NotifyingClass();
+        _Root.MonitoredId1CollectionProperty[0].MonitoredId1CollectionProperty[0].ObjectProperty = new NotifyingObject();
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root.MonitoredId1CollectionProperty[0].MonitoredId1CollectionProperty[0], _Args.ChangedObject);
 
@@ -551,12 +542,12 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     [TestMethod]
     public void MonitoredId2ObjectProperty_Change()
     {
-        _Root.MonitoredId2ObjectProperty.MonitoredId2ObjectProperty.MonitoredId2ObjectProperty = new NotifyingClass();
+        _Root.MonitoredId2ObjectProperty.MonitoredId2ObjectProperty.MonitoredId2ObjectProperty = new NotifyingObject();
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root.MonitoredId2ObjectProperty.MonitoredId2ObjectProperty, _Args.ChangedObject);
 
         _Args = null;
-        _Root.MonitoredId2ObjectProperty.MonitoredId2ObjectProperty.ObjectProperty = new NotifyingClass();
+        _Root.MonitoredId2ObjectProperty.MonitoredId2ObjectProperty.ObjectProperty = new NotifyingObject();
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root.MonitoredId2ObjectProperty.MonitoredId2ObjectProperty, _Args.ChangedObject);
     }
@@ -567,7 +558,7 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     [TestMethod]
     public void MonitoredId2CollectionProperty_Change()
     {
-        _Root.MonitoredId2CollectionProperty[0].MonitoredId2CollectionProperty[0].ObjectProperty = new NotifyingClass();
+        _Root.MonitoredId2CollectionProperty[0].MonitoredId2CollectionProperty[0].ObjectProperty = new NotifyingObject();
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root.MonitoredId2CollectionProperty[0].MonitoredId2CollectionProperty[0], _Args.ChangedObject);
 
@@ -587,7 +578,7 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     [TestMethod]
     public void MonitoredId1AndId2ObjectProperty_Change()
     {
-        _Root.MonitoredId1AndId2ObjectProperty.MonitoredId1AndId2ObjectProperty.MonitoredId1AndId2ObjectProperty = new NotifyingClass();
+        _Root.MonitoredId1AndId2ObjectProperty.MonitoredId1AndId2ObjectProperty.MonitoredId1AndId2ObjectProperty = new NotifyingObject();
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root.MonitoredId1AndId2ObjectProperty.MonitoredId1AndId2ObjectProperty, _Args.ChangedObject);
     }
@@ -598,7 +589,7 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     [TestMethod]
     public void MonitoredId1AndId2CollectionProperty_Change()
     {
-        _Root.MonitoredId1AndId2CollectionProperty[0].MonitoredId1AndId2CollectionProperty[0].ObjectProperty = new NotifyingClass();
+        _Root.MonitoredId1AndId2CollectionProperty[0].MonitoredId1AndId2CollectionProperty[0].ObjectProperty = new NotifyingObject();
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root.MonitoredId1AndId2CollectionProperty[0].MonitoredId1AndId2CollectionProperty[0], _Args.ChangedObject);
 
@@ -618,13 +609,13 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     [TestMethod]
     public void MonitoredWithoutSublevelsObjectProperty_Change()
     {
-        _Root.MonitoredWithoutSublevelsObjectProperty.ObjectProperty.ObjectProperty = new NotifyingClass();
+        _Root.MonitoredWithoutSublevelsObjectProperty.ObjectProperty.ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
-        _Root.MonitoredWithoutSublevelsObjectProperty.ObjectProperty = new NotifyingClass();
+        _Root.MonitoredWithoutSublevelsObjectProperty.ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
-        _Root.MonitoredWithoutSublevelsObjectProperty = new NotifyingClass();
+        _Root.MonitoredWithoutSublevelsObjectProperty = new NotifyingObject();
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root, _Args.ChangedObject);
     }
@@ -635,13 +626,13 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     [TestMethod]
     public void MonitoredWithoutSublevelsCollectionProperty_Change()
     {
-        _Root.MonitoredWithoutSublevelsCollectionProperty[0].CollectionProperty[0].ObjectProperty = new NotifyingClass();
+        _Root.MonitoredWithoutSublevelsCollectionProperty[0].CollectionProperty[0].ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
         _Root.MonitoredWithoutSublevelsCollectionProperty[0].CollectionProperty.Clear();
         Assert.IsNull(_Args);
 
-        _Root.MonitoredWithoutSublevelsCollectionProperty[0].ObjectProperty = new NotifyingClass();
+        _Root.MonitoredWithoutSublevelsCollectionProperty[0].ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
         _Root.MonitoredWithoutSublevelsCollectionProperty.Clear();
@@ -659,20 +650,20 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     [TestMethod]
     public void MonitoredSublevelsOnlyObjectProperty_Change()
     {
-        _Root.MonitoredSublevelsOnlyObjectProperty.ObjectProperty = new NotifyingClass();
+        _Root.MonitoredSublevelsOnlyObjectProperty.ObjectProperty = new NotifyingObject();
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root.MonitoredSublevelsOnlyObjectProperty, _Args.ChangedObject);
 
         _Args = null;
-        _Root.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty = new NotifyingClass();
+        _Root.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
-        _Root.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty.ObjectProperty = new NotifyingClass();
+        _Root.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty.ObjectProperty = new NotifyingObject();
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty, _Args.ChangedObject);
 
         _Args = null;
-        _Root.MonitoredSublevelsOnlyObjectProperty = new NotifyingClass();
+        _Root.MonitoredSublevelsOnlyObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
     }
 
@@ -682,16 +673,16 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     [TestMethod]
     public void MonitoredSublevelsOnlyObjectProperty_NestedChangeAfterTopLevelChange()
     {
-        _Root.MonitoredSublevelsOnlyObjectProperty = new NotifyingClass
+        _Root.MonitoredSublevelsOnlyObjectProperty = new NotifyingObject
         {
-            MonitoredSublevelsOnlyObjectProperty = new NotifyingClass()
+            MonitoredSublevelsOnlyObjectProperty = new NotifyingObject()
         };
 
         _Args = null;
-        _Root.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty = new NotifyingClass();
+        _Root.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
-        _Root.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty.ObjectProperty = new NotifyingClass();
+        _Root.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty.ObjectProperty = new NotifyingObject();
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root.MonitoredSublevelsOnlyObjectProperty.MonitoredSublevelsOnlyObjectProperty, _Args.ChangedObject);
     }
@@ -705,7 +696,7 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
         _Root.MonitoredSublevelsOnlyCollectionProperty[0].MonitoredSublevelsOnlyCollectionProperty.Clear();
         Assert.IsNull(_Args);
 
-        _Root.MonitoredSublevelsOnlyCollectionProperty[0].MonitoredSublevelsOnlyCollectionProperty = new ObservableCollection<NotifyingClass>();
+        _Root.MonitoredSublevelsOnlyCollectionProperty[0].MonitoredSublevelsOnlyCollectionProperty = new ObservableCollection<NotifyingObject>();
         Assert.IsNull(_Args);
 
         _Root.MonitoredSublevelsOnlyCollectionProperty[0].CollectionProperty.Clear();
@@ -723,19 +714,19 @@ public class ChangesMonitor_IdNull_MonitorOnlyMarkedPropertiesFalse_UseWeakEvent
     [TestMethod]
     public void MonitoredSublevelsOnlyCollectionProperty_NestedChangeAfterTopLevelChange()
     {
-        _Root.MonitoredSublevelsOnlyCollectionProperty = new ObservableCollection<NotifyingClass>
+        _Root.MonitoredSublevelsOnlyCollectionProperty = new ObservableCollection<NotifyingObject>
         {
-            new NotifyingClass
+            new NotifyingObject
             {
-                MonitoredSublevelsOnlyCollectionProperty = new ObservableCollection<NotifyingClass>
+                MonitoredSublevelsOnlyCollectionProperty = new ObservableCollection<NotifyingObject>
                 {
-                    new NotifyingClass()
+                    new NotifyingObject()
                 }
             }
         };
 
         _Args = null;
-        _Root.MonitoredSublevelsOnlyCollectionProperty[0].MonitoredSublevelsOnlyCollectionProperty[0].ObjectProperty = new NotifyingClass();
+        _Root.MonitoredSublevelsOnlyCollectionProperty[0].MonitoredSublevelsOnlyCollectionProperty[0].ObjectProperty = new NotifyingObject();
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root.MonitoredSublevelsOnlyCollectionProperty[0].MonitoredSublevelsOnlyCollectionProperty[0], _Args.ChangedObject);
 

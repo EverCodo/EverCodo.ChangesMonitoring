@@ -10,16 +10,16 @@ public class ChangesMonitor_Id2_MonitorOnlyMarkedPropertiesTrue_UseWeakEventsFal
 {
     public ChangesMonitor_Id2_MonitorOnlyMarkedPropertiesTrue_UseWeakEventsFalse_Tests()
     {
-        _Root = NotifyingClass.CreateTreeWith3Layers();
+        _Root = NotifyingObject.CreateTreeWith3Layers();
 
-        _ChangesMonitor = ChangesMonitor.Create("Id2", _Root, true, false);
+        _ChangesMonitor = ChangesMonitor.Create(_Root, "Id2", true, false);
         _ChangesMonitor.Changed += ChangesMonitor_Changed;
     }
 
     /// <summary>
     /// Object hierarchy root.
     /// </summary>
-    private readonly NotifyingClass _Root;
+    private readonly NotifyingObject _Root;
 
     /// <summary>
     /// Changes monitor attached to root.
@@ -47,19 +47,19 @@ public class ChangesMonitor_Id2_MonitorOnlyMarkedPropertiesTrue_UseWeakEventsFal
     [TestMethod]
     public void NotMonitoredObjectProperty_Change()
     {
-        _Root.NotMonitoredObjectProperty.ObjectProperty.ObjectProperty = new NotifyingClass();
+        _Root.NotMonitoredObjectProperty.ObjectProperty.ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
-        _Root.ObjectProperty.NotMonitoredObjectProperty.ObjectProperty = new NotifyingClass();
+        _Root.ObjectProperty.NotMonitoredObjectProperty.ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
-        _Root.ObjectProperty.ObjectProperty.NotMonitoredObjectProperty = new NotifyingClass();
+        _Root.ObjectProperty.ObjectProperty.NotMonitoredObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
         _Root.NotMonitoredObjectProperty.CollectionProperty.Clear();
         Assert.IsNull(_Args);
 
-        _Root.NotMonitoredObjectProperty = new NotifyingClass();
+        _Root.NotMonitoredObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
     }
 
@@ -69,25 +69,25 @@ public class ChangesMonitor_Id2_MonitorOnlyMarkedPropertiesTrue_UseWeakEventsFal
     [TestMethod]
     public void NotMonitoredCollectionProperty_Change()
     {
-        _Root.NotMonitoredCollectionProperty[0].CollectionProperty[0].ObjectProperty = new NotifyingClass();
+        _Root.NotMonitoredCollectionProperty[0].CollectionProperty[0].ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
         _Root.NotMonitoredCollectionProperty[0].CollectionProperty.Clear();
         Assert.IsNull(_Args);
 
-        _Root.CollectionProperty[0].NotMonitoredCollectionProperty[0].ObjectProperty = new NotifyingClass();
+        _Root.CollectionProperty[0].NotMonitoredCollectionProperty[0].ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
         _Root.CollectionProperty[0].NotMonitoredCollectionProperty.Clear();
         Assert.IsNull(_Args);
 
-        _Root.ObjectProperty.NotMonitoredCollectionProperty[0].ObjectProperty = new NotifyingClass();
+        _Root.ObjectProperty.NotMonitoredCollectionProperty[0].ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
         _Root.ObjectProperty.NotMonitoredCollectionProperty.Clear();
         Assert.IsNull(_Args);
 
-        _Root.NotMonitoredCollectionProperty[0].ObjectProperty = new NotifyingClass();
+        _Root.NotMonitoredCollectionProperty[0].ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
         _Root.NotMonitoredCollectionProperty.Clear();
@@ -104,7 +104,7 @@ public class ChangesMonitor_Id2_MonitorOnlyMarkedPropertiesTrue_UseWeakEventsFal
     [TestMethod]
     public void MonitoredObjectProperty_Change()
     {
-        _Root.MonitoredObjectProperty.MonitoredObjectProperty.MonitoredObjectProperty = new NotifyingClass();
+        _Root.MonitoredObjectProperty.MonitoredObjectProperty.MonitoredObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
     }
 
@@ -114,7 +114,7 @@ public class ChangesMonitor_Id2_MonitorOnlyMarkedPropertiesTrue_UseWeakEventsFal
     [TestMethod]
     public void MonitoredCollectionProperty_Change()
     {
-        _Root.MonitoredCollectionProperty[0].MonitoredCollectionProperty[0].ObjectProperty = new NotifyingClass();
+        _Root.MonitoredCollectionProperty[0].MonitoredCollectionProperty[0].ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
         _Root.MonitoredCollectionProperty[0].MonitoredCollectionProperty.Clear();
@@ -131,10 +131,10 @@ public class ChangesMonitor_Id2_MonitorOnlyMarkedPropertiesTrue_UseWeakEventsFal
     [TestMethod]
     public void MonitoredId1ObjectProperty_Change()
     {
-        _Root.MonitoredId1ObjectProperty.MonitoredId1ObjectProperty.MonitoredId1ObjectProperty = new NotifyingClass();
+        _Root.MonitoredId1ObjectProperty.MonitoredId1ObjectProperty.MonitoredId1ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
-        _Root.MonitoredId1ObjectProperty.MonitoredId1ObjectProperty.ObjectProperty = new NotifyingClass();
+        _Root.MonitoredId1ObjectProperty.MonitoredId1ObjectProperty.ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
     }
 
@@ -144,7 +144,7 @@ public class ChangesMonitor_Id2_MonitorOnlyMarkedPropertiesTrue_UseWeakEventsFal
     [TestMethod]
     public void MonitoredId1CollectionProperty_Change()
     {
-        _Root.MonitoredId1CollectionProperty[0].MonitoredId1CollectionProperty[0].ObjectProperty = new NotifyingClass();
+        _Root.MonitoredId1CollectionProperty[0].MonitoredId1CollectionProperty[0].ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
         _Root.MonitoredId1CollectionProperty[0].MonitoredId1CollectionProperty.Clear();
@@ -161,12 +161,12 @@ public class ChangesMonitor_Id2_MonitorOnlyMarkedPropertiesTrue_UseWeakEventsFal
     [TestMethod]
     public void MonitoredId2ObjectProperty_Change()
     {
-        _Root.MonitoredId2ObjectProperty.MonitoredId2ObjectProperty.MonitoredId2ObjectProperty = new NotifyingClass();
+        _Root.MonitoredId2ObjectProperty.MonitoredId2ObjectProperty.MonitoredId2ObjectProperty = new NotifyingObject();
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root.MonitoredId2ObjectProperty.MonitoredId2ObjectProperty, _Args.ChangedObject);
 
         _Args = null;
-        _Root.MonitoredId2ObjectProperty.MonitoredId2ObjectProperty.ObjectProperty = new NotifyingClass();
+        _Root.MonitoredId2ObjectProperty.MonitoredId2ObjectProperty.ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
     }
 
@@ -176,7 +176,7 @@ public class ChangesMonitor_Id2_MonitorOnlyMarkedPropertiesTrue_UseWeakEventsFal
     [TestMethod]
     public void MonitoredId2CollectionProperty_Change()
     {
-        _Root.MonitoredId2CollectionProperty[0].MonitoredId2CollectionProperty[0].ObjectProperty = new NotifyingClass();
+        _Root.MonitoredId2CollectionProperty[0].MonitoredId2CollectionProperty[0].ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
         _Root.MonitoredId2CollectionProperty[0].MonitoredId2CollectionProperty.Clear();
@@ -194,10 +194,10 @@ public class ChangesMonitor_Id2_MonitorOnlyMarkedPropertiesTrue_UseWeakEventsFal
     [TestMethod]
     public void MonitoredId1AndId2ObjectProperty_Change()
     {
-        _Root.MonitoredId1AndId2ObjectProperty.MonitoredId1AndId2ObjectProperty.ObjectProperty = new NotifyingClass();
+        _Root.MonitoredId1AndId2ObjectProperty.MonitoredId1AndId2ObjectProperty.ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
-        _Root.MonitoredId1AndId2ObjectProperty.MonitoredId1AndId2ObjectProperty.MonitoredId1AndId2ObjectProperty = new NotifyingClass();
+        _Root.MonitoredId1AndId2ObjectProperty.MonitoredId1AndId2ObjectProperty.MonitoredId1AndId2ObjectProperty = new NotifyingObject();
         Assert.IsNotNull(_Args);
         Assert.AreSame(_Root.MonitoredId1AndId2ObjectProperty.MonitoredId1AndId2ObjectProperty, _Args.ChangedObject);
     }
@@ -208,7 +208,7 @@ public class ChangesMonitor_Id2_MonitorOnlyMarkedPropertiesTrue_UseWeakEventsFal
     [TestMethod]
     public void MonitoredId1AndId2CollectionProperty_Change()
     {
-        _Root.MonitoredId1AndId2CollectionProperty[0].MonitoredId1AndId2CollectionProperty[0].ObjectProperty = new NotifyingClass();
+        _Root.MonitoredId1AndId2CollectionProperty[0].MonitoredId1AndId2CollectionProperty[0].ObjectProperty = new NotifyingObject();
         Assert.IsNull(_Args);
 
         _Root.MonitoredId1AndId2CollectionProperty[0].MonitoredId1AndId2CollectionProperty.Clear();

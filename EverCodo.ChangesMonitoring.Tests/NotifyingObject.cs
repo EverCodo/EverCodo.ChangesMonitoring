@@ -1,4 +1,6 @@
+using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -7,18 +9,18 @@ namespace EverCodo.ChangesMonitoring.Tests;
 /// <summary>
 /// Sample notifying class to test changes monitoring.
 /// </summary>
-internal class NotifyingClass : INotifyPropertyChanged
+internal class NotifyingObject : INotifyPropertyChanged
 {
     /// <summary>
-    /// Creates objects subtree with 3 layers of NotifyingClass objects.
+    /// Creates objects subtree with 3 layers of NotifyingObject objects.
     /// </summary>
-    /// <returns>NotifyingClass objects subtree.</returns>
-    public static NotifyingClass CreateTreeWith3Layers()
+    /// <returns>NotifyingObject objects subtree.</returns>
+    public static NotifyingObject CreateTreeWith3Layers()
     {
-        var notifyingClass = new NotifyingClass
+        var notifyingClass = new NotifyingObject
         {
             ObjectProperty = CreateTreeWith2Layers(),
-            CollectionProperty = new ObservableCollection<NotifyingClass>
+            CollectionProperty = new ObservableCollection<NotifyingObject>
             {
                 CreateTreeWith2Layers(),
                 CreateTreeWith2Layers(),
@@ -26,7 +28,7 @@ internal class NotifyingClass : INotifyPropertyChanged
             },
 
             NotMonitoredObjectProperty = CreateTreeWith2Layers(),
-            NotMonitoredCollectionProperty = new ObservableCollection<NotifyingClass>
+            NotMonitoredCollectionProperty = new ObservableCollection<NotifyingObject>
             {
                 CreateTreeWith2Layers(),
                 CreateTreeWith2Layers(),
@@ -34,7 +36,7 @@ internal class NotifyingClass : INotifyPropertyChanged
             },
 
             MonitoredObjectProperty = CreateTreeWith2Layers(),
-            MonitoredCollectionProperty = new ObservableCollection<NotifyingClass>
+            MonitoredCollectionProperty = new ObservableCollection<NotifyingObject>
             {
                 CreateTreeWith2Layers(),
                 CreateTreeWith2Layers(),
@@ -42,7 +44,7 @@ internal class NotifyingClass : INotifyPropertyChanged
             },
 
             MonitoredId1ObjectProperty = CreateTreeWith2Layers(),
-            MonitoredId1CollectionProperty = new ObservableCollection<NotifyingClass>
+            MonitoredId1CollectionProperty = new ObservableCollection<NotifyingObject>
             {
                 CreateTreeWith2Layers(),
                 CreateTreeWith2Layers(),
@@ -50,7 +52,7 @@ internal class NotifyingClass : INotifyPropertyChanged
             },
 
             MonitoredId2ObjectProperty = CreateTreeWith2Layers(),
-            MonitoredId2CollectionProperty = new ObservableCollection<NotifyingClass>
+            MonitoredId2CollectionProperty = new ObservableCollection<NotifyingObject>
             {
                 CreateTreeWith2Layers(),
                 CreateTreeWith2Layers(),
@@ -58,7 +60,7 @@ internal class NotifyingClass : INotifyPropertyChanged
             },
 
             MonitoredId1AndId2ObjectProperty = CreateTreeWith2Layers(),
-            MonitoredId1AndId2CollectionProperty = new ObservableCollection<NotifyingClass>
+            MonitoredId1AndId2CollectionProperty = new ObservableCollection<NotifyingObject>
             {
                 CreateTreeWith2Layers(),
                 CreateTreeWith2Layers(),
@@ -66,7 +68,7 @@ internal class NotifyingClass : INotifyPropertyChanged
             },
 
             MonitoredWithoutSublevelsObjectProperty = CreateTreeWith2Layers(),
-            MonitoredWithoutSublevelsCollectionProperty = new ObservableCollection<NotifyingClass>
+            MonitoredWithoutSublevelsCollectionProperty = new ObservableCollection<NotifyingObject>
             {
                 CreateTreeWith2Layers(),
                 CreateTreeWith2Layers(),
@@ -74,7 +76,7 @@ internal class NotifyingClass : INotifyPropertyChanged
             },
 
             MonitoredSublevelsOnlyObjectProperty = CreateTreeWith2Layers(),
-            MonitoredSublevelsOnlyCollectionProperty = new ObservableCollection<NotifyingClass>
+            MonitoredSublevelsOnlyCollectionProperty = new ObservableCollection<NotifyingObject>
             {
                 CreateTreeWith2Layers(),
                 CreateTreeWith2Layers(),
@@ -86,75 +88,75 @@ internal class NotifyingClass : INotifyPropertyChanged
     }
 
     /// <summary>
-    /// Creates objects subtree with 2 layers of NotifyingClass objects.
+    /// Creates objects subtree with 2 layers of NotifyingObject objects.
     /// </summary>
-    /// <returns>NotifyingClass objects subtree.</returns>
-    public static NotifyingClass CreateTreeWith2Layers()
+    /// <returns>NotifyingObject objects subtree.</returns>
+    public static NotifyingObject CreateTreeWith2Layers()
     {
-        var notifyingClass = new NotifyingClass
+        var notifyingClass = new NotifyingObject
         {
-            ObjectProperty = new NotifyingClass(),
-            CollectionProperty = new ObservableCollection<NotifyingClass>
+            ObjectProperty = new NotifyingObject(),
+            CollectionProperty = new ObservableCollection<NotifyingObject>
             {
-                new NotifyingClass(),
-                new NotifyingClass(),
-                new NotifyingClass(),
+                new NotifyingObject(),
+                new NotifyingObject(),
+                new NotifyingObject(),
             },
             
-            NotMonitoredObjectProperty = new NotifyingClass(),
-            NotMonitoredCollectionProperty = new ObservableCollection<NotifyingClass>
+            NotMonitoredObjectProperty = new NotifyingObject(),
+            NotMonitoredCollectionProperty = new ObservableCollection<NotifyingObject>
             {
-                new NotifyingClass(),
-                new NotifyingClass(),
-                new NotifyingClass(),
+                new NotifyingObject(),
+                new NotifyingObject(),
+                new NotifyingObject(),
             },
 
-            MonitoredObjectProperty = new NotifyingClass(),
-            MonitoredCollectionProperty = new ObservableCollection<NotifyingClass>
+            MonitoredObjectProperty = new NotifyingObject(),
+            MonitoredCollectionProperty = new ObservableCollection<NotifyingObject>
             {
-                new NotifyingClass(),
-                new NotifyingClass(),
-                new NotifyingClass(),
+                new NotifyingObject(),
+                new NotifyingObject(),
+                new NotifyingObject(),
             },
 
-            MonitoredId1ObjectProperty = new NotifyingClass(),
-            MonitoredId1CollectionProperty = new ObservableCollection<NotifyingClass>
+            MonitoredId1ObjectProperty = new NotifyingObject(),
+            MonitoredId1CollectionProperty = new ObservableCollection<NotifyingObject>
             {
-                new NotifyingClass(),
-                new NotifyingClass(),
-                new NotifyingClass(),
+                new NotifyingObject(),
+                new NotifyingObject(),
+                new NotifyingObject(),
             },
 
-            MonitoredId2ObjectProperty = new NotifyingClass(),
-            MonitoredId2CollectionProperty = new ObservableCollection<NotifyingClass>
+            MonitoredId2ObjectProperty = new NotifyingObject(),
+            MonitoredId2CollectionProperty = new ObservableCollection<NotifyingObject>
             {
-                new NotifyingClass(),
-                new NotifyingClass(),
-                new NotifyingClass(),
+                new NotifyingObject(),
+                new NotifyingObject(),
+                new NotifyingObject(),
             },
 
-            MonitoredId1AndId2ObjectProperty = new NotifyingClass(),
-            MonitoredId1AndId2CollectionProperty = new ObservableCollection<NotifyingClass>
+            MonitoredId1AndId2ObjectProperty = new NotifyingObject(),
+            MonitoredId1AndId2CollectionProperty = new ObservableCollection<NotifyingObject>
             {
-                new NotifyingClass(),
-                new NotifyingClass(),
-                new NotifyingClass(),
+                new NotifyingObject(),
+                new NotifyingObject(),
+                new NotifyingObject(),
             },
 
-            MonitoredWithoutSublevelsObjectProperty = new NotifyingClass(),
-            MonitoredWithoutSublevelsCollectionProperty = new ObservableCollection<NotifyingClass>
+            MonitoredWithoutSublevelsObjectProperty = new NotifyingObject(),
+            MonitoredWithoutSublevelsCollectionProperty = new ObservableCollection<NotifyingObject>
             {
-                new NotifyingClass(),
-                new NotifyingClass(),
-                new NotifyingClass(),
+                new NotifyingObject(),
+                new NotifyingObject(),
+                new NotifyingObject(),
             },
 
-            MonitoredSublevelsOnlyObjectProperty = new NotifyingClass(),
-            MonitoredSublevelsOnlyCollectionProperty = new ObservableCollection<NotifyingClass>
+            MonitoredSublevelsOnlyObjectProperty = new NotifyingObject(),
+            MonitoredSublevelsOnlyCollectionProperty = new ObservableCollection<NotifyingObject>
             {
-                new NotifyingClass(),
-                new NotifyingClass(),
-                new NotifyingClass(),
+                new NotifyingObject(),
+                new NotifyingObject(),
+                new NotifyingObject(),
             },
         };
 
@@ -178,12 +180,12 @@ internal class NotifyingClass : INotifyPropertyChanged
     /// <summary>
     /// Object property backing field.
     /// </summary>
-    private NotifyingClass _ObjectProperty;
+    private NotifyingObject _ObjectProperty;
 
     /// <summary>
     /// Object property.
     /// </summary>
-    public NotifyingClass ObjectProperty
+    public NotifyingObject ObjectProperty
     {
         get => _ObjectProperty;
         set
@@ -199,12 +201,12 @@ internal class NotifyingClass : INotifyPropertyChanged
     /// <summary>
     /// Collection property backing field.
     /// </summary>
-    private ObservableCollection<NotifyingClass> _CollectionProperty;
+    private ObservableCollection<NotifyingObject> _CollectionProperty;
 
     /// <summary>
     /// Collection property.
     /// </summary>
-    public ObservableCollection<NotifyingClass> CollectionProperty
+    public ObservableCollection<NotifyingObject> CollectionProperty
     {
         get => _CollectionProperty;
         set
@@ -224,7 +226,7 @@ internal class NotifyingClass : INotifyPropertyChanged
     /// <summary>
     /// Object property backing field.
     /// </summary>
-    private NotifyingClass _NotMonitoredObjectProperty;
+    private NotifyingObject _NotMonitoredObjectProperty;
 
     /// <summary>
     /// Object property.
@@ -232,7 +234,7 @@ internal class NotifyingClass : INotifyPropertyChanged
     [MonitorChanges(DoNotMonitor = true)]
     [MonitorChanges(Id = "Id1", DoNotMonitor = true)]
     [MonitorChanges(Id = "Id2", DoNotMonitor = true)]
-    public NotifyingClass NotMonitoredObjectProperty
+    public NotifyingObject NotMonitoredObjectProperty
     {
         get => _NotMonitoredObjectProperty;
         set
@@ -248,7 +250,7 @@ internal class NotifyingClass : INotifyPropertyChanged
     /// <summary>
     /// Collection property backing field.
     /// </summary>
-    private ObservableCollection<NotifyingClass> _NotMonitoredCollectionProperty;
+    private ObservableCollection<NotifyingObject> _NotMonitoredCollectionProperty;
 
     /// <summary>
     /// Collection property.
@@ -256,7 +258,7 @@ internal class NotifyingClass : INotifyPropertyChanged
     [MonitorChanges(DoNotMonitor = true)]
     [MonitorChanges(Id = "Id1", DoNotMonitor = true)]
     [MonitorChanges(Id = "Id2", DoNotMonitor = true)]
-    public ObservableCollection<NotifyingClass> NotMonitoredCollectionProperty
+    public ObservableCollection<NotifyingObject> NotMonitoredCollectionProperty
     {
         get => _NotMonitoredCollectionProperty;
         set
@@ -276,13 +278,13 @@ internal class NotifyingClass : INotifyPropertyChanged
     /// <summary>
     /// Object property backing field.
     /// </summary>
-    private NotifyingClass _MonitoredObjectProperty;
+    private NotifyingObject _MonitoredObjectProperty;
 
     /// <summary>
     /// Object property.
     /// </summary>
     [MonitorChanges]
-    public NotifyingClass MonitoredObjectProperty
+    public NotifyingObject MonitoredObjectProperty
     {
         get => _MonitoredObjectProperty;
         set
@@ -298,13 +300,13 @@ internal class NotifyingClass : INotifyPropertyChanged
     /// <summary>
     /// Collection property backing field.
     /// </summary>
-    private ObservableCollection<NotifyingClass> _MonitoredCollectionProperty;
+    private ObservableCollection<NotifyingObject> _MonitoredCollectionProperty;
 
     /// <summary>
     /// Collection property.
     /// </summary>
     [MonitorChanges]
-    public ObservableCollection<NotifyingClass> MonitoredCollectionProperty
+    public ObservableCollection<NotifyingObject> MonitoredCollectionProperty
     {
         get => _MonitoredCollectionProperty;
         set
@@ -324,14 +326,14 @@ internal class NotifyingClass : INotifyPropertyChanged
     /// <summary>
     /// Object property backing field.
     /// </summary>
-    private NotifyingClass _MonitoredId1ObjectProperty;
+    private NotifyingObject _MonitoredId1ObjectProperty;
 
     /// <summary>
     /// Object property.
     /// </summary>
     [MonitorChanges(Id = "Id1", MonitorOnlyMarkedProperties = false)]
     [MonitorChanges(Id = "Id2", DoNotMonitor = true)]
-    public NotifyingClass MonitoredId1ObjectProperty
+    public NotifyingObject MonitoredId1ObjectProperty
     {
         get => _MonitoredId1ObjectProperty;
         set
@@ -347,14 +349,14 @@ internal class NotifyingClass : INotifyPropertyChanged
     /// <summary>
     /// Collection property backing field.
     /// </summary>
-    private ObservableCollection<NotifyingClass> _MonitoredId1CollectionProperty;
+    private ObservableCollection<NotifyingObject> _MonitoredId1CollectionProperty;
 
     /// <summary>
     /// Collection property.
     /// </summary>
     [MonitorChanges(Id = "Id1", MonitorOnlyMarkedProperties = false)]
     [MonitorChanges(Id = "Id2", DoNotMonitor = true)]
-    public ObservableCollection<NotifyingClass> MonitoredId1CollectionProperty
+    public ObservableCollection<NotifyingObject> MonitoredId1CollectionProperty
     {
         get => _MonitoredId1CollectionProperty;
         set
@@ -374,14 +376,14 @@ internal class NotifyingClass : INotifyPropertyChanged
     /// <summary>
     /// Object property backing field.
     /// </summary>
-    private NotifyingClass _MonitoredId2ObjectProperty;
+    private NotifyingObject _MonitoredId2ObjectProperty;
 
     /// <summary>
     /// Object property.
     /// </summary>
     [MonitorChanges(Id = "Id1", DoNotMonitor = true)]
     [MonitorChanges(Id = "Id2", MonitorOnlyMarkedProperties = true)]
-    public NotifyingClass MonitoredId2ObjectProperty
+    public NotifyingObject MonitoredId2ObjectProperty
     {
         get => _MonitoredId2ObjectProperty;
         set
@@ -397,14 +399,14 @@ internal class NotifyingClass : INotifyPropertyChanged
     /// <summary>
     /// Collection property backing field.
     /// </summary>
-    private ObservableCollection<NotifyingClass> _MonitoredId2CollectionProperty;
+    private ObservableCollection<NotifyingObject> _MonitoredId2CollectionProperty;
 
     /// <summary>
     /// Collection property.
     /// </summary>
     [MonitorChanges(Id = "Id1", DoNotMonitor = true)]
     [MonitorChanges(Id = "Id2", MonitorOnlyMarkedProperties = true)]
-    public ObservableCollection<NotifyingClass> MonitoredId2CollectionProperty
+    public ObservableCollection<NotifyingObject> MonitoredId2CollectionProperty
     {
         get => _MonitoredId2CollectionProperty;
         set
@@ -424,14 +426,14 @@ internal class NotifyingClass : INotifyPropertyChanged
     /// <summary>
     /// Object property backing field.
     /// </summary>
-    private NotifyingClass _MonitoredId1AndId2ObjectProperty;
+    private NotifyingObject _MonitoredId1AndId2ObjectProperty;
 
     /// <summary>
     /// Object property.
     /// </summary>
     [MonitorChanges(Id = "Id1")]
     [MonitorChanges(Id = "Id2")]
-    public NotifyingClass MonitoredId1AndId2ObjectProperty
+    public NotifyingObject MonitoredId1AndId2ObjectProperty
     {
         get => _MonitoredId1AndId2ObjectProperty;
         set
@@ -447,14 +449,14 @@ internal class NotifyingClass : INotifyPropertyChanged
     /// <summary>
     /// Collection property backing field.
     /// </summary>
-    private ObservableCollection<NotifyingClass> _MonitoredId1AndId2CollectionProperty;
+    private ObservableCollection<NotifyingObject> _MonitoredId1AndId2CollectionProperty;
 
     /// <summary>
     /// Collection property.
     /// </summary>
     [MonitorChanges(Id = "Id1")]
     [MonitorChanges(Id = "Id2")]
-    public ObservableCollection<NotifyingClass> MonitoredId1AndId2CollectionProperty
+    public ObservableCollection<NotifyingObject> MonitoredId1AndId2CollectionProperty
     {
         get => _MonitoredId1AndId2CollectionProperty;
         set
@@ -474,13 +476,13 @@ internal class NotifyingClass : INotifyPropertyChanged
     /// <summary>
     /// Object property backing field.
     /// </summary>
-    private NotifyingClass _MonitoredWithoutSublevelsObjectProperty;
+    private NotifyingObject _MonitoredWithoutSublevelsObjectProperty;
 
     /// <summary>
     /// Object property.
     /// </summary>
     [MonitorChanges(MonitorSublevels = false)]
-    public NotifyingClass MonitoredWithoutSublevelsObjectProperty
+    public NotifyingObject MonitoredWithoutSublevelsObjectProperty
     {
         get => _MonitoredWithoutSublevelsObjectProperty;
         set
@@ -496,13 +498,13 @@ internal class NotifyingClass : INotifyPropertyChanged
     /// <summary>
     /// Collection property backing field.
     /// </summary>
-    private ObservableCollection<NotifyingClass> _MonitoredWithoutSublevelsCollectionProperty;
+    private ObservableCollection<NotifyingObject> _MonitoredWithoutSublevelsCollectionProperty;
 
     /// <summary>
     /// Collection property.
     /// </summary>
     [MonitorChanges(MonitorSublevels = false)]
-    public ObservableCollection<NotifyingClass> MonitoredWithoutSublevelsCollectionProperty
+    public ObservableCollection<NotifyingObject> MonitoredWithoutSublevelsCollectionProperty
     {
         get => _MonitoredWithoutSublevelsCollectionProperty;
         set
@@ -522,13 +524,13 @@ internal class NotifyingClass : INotifyPropertyChanged
     /// <summary>
     /// Object property backing field.
     /// </summary>
-    private NotifyingClass _MonitoredSublevelsOnlyObjectProperty;
+    private NotifyingObject _MonitoredSublevelsOnlyObjectProperty;
 
     /// <summary>
     /// Object property.
     /// </summary>
     [MonitorChanges(MonitorProperty = false, MonitorSublevels = true)]
-    public NotifyingClass MonitoredSublevelsOnlyObjectProperty
+    public NotifyingObject MonitoredSublevelsOnlyObjectProperty
     {
         get => _MonitoredSublevelsOnlyObjectProperty;
         set
@@ -544,13 +546,13 @@ internal class NotifyingClass : INotifyPropertyChanged
     /// <summary>
     /// Collection property backing field.
     /// </summary>
-    private ObservableCollection<NotifyingClass> _MonitoredSublevelsOnlyCollectionProperty;
+    private ObservableCollection<NotifyingObject> _MonitoredSublevelsOnlyCollectionProperty;
 
     /// <summary>
     /// Collection property.
     /// </summary>
     [MonitorChanges(MonitorProperty = false, MonitorSublevels = true)]
-    public ObservableCollection<NotifyingClass> MonitoredSublevelsOnlyCollectionProperty
+    public ObservableCollection<NotifyingObject> MonitoredSublevelsOnlyCollectionProperty
     {
         get => _MonitoredSublevelsOnlyCollectionProperty;
         set
