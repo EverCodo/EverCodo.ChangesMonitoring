@@ -174,22 +174,22 @@ Use `[MonitorChanges]` attribute on object properties to control how changes of 
 ### Property monitoring behavior variety
 Several changes monitors to illustrate the idea:
 ```csharp
-// changes monitor without id specified, configured to look for changes on all properties (greedy mode)
+// changes monitor without id specified, configured to subscribe for changes on all properties (greedy mode)
 var idNull_Greedy = ChangesMonitor.Create(id: null, monitorOnlyMarkedProperties: false);
 
-// changes monitor with Id1, configured to look for changes on all properties (greedy mode)
+// changes monitor with Id1, configured to subscribe for changes on all properties (greedy mode)
 var id1_Greedy = ChangesMonitor.Create(id: "Id1", monitorOnlyMarkedProperties: false);
 
-// changes monitor with Id2, configured to look for changes on all properties (greedy mode)
+// changes monitor with Id2, configured to subscribe for changes on all properties (greedy mode)
 var id2_Greedy = ChangesMonitor.Create(id: "Id2", monitorOnlyMarkedProperties: false);
 
-// changes monitor without id specified, configured to look for changes on properties marked with [MonitorChanges] attribute (strict mode)
+// changes monitor without id specified, configured to subscribe for changes on properties marked with [MonitorChanges] attribute (strict mode)
 var idNull_Strict = ChangesMonitor.Create(id: null, monitorOnlyMarkedProperties: true);
 
-// changes monitor with Id1, configured to look for changes on properties marked with [MonitorChanges] attribute (strict mode)
+// changes monitor with Id1, configured to subscribe for changes on properties marked with [MonitorChanges] attribute (strict mode)
 var id1_Strict = ChangesMonitor.Create(id: "Id1", monitorOnlyMarkedProperties: true);
 
-// changes monitor with Id2, configured to look for changes on properties marked with [MonitorChanges] attribute (strict mode)
+// changes monitor with Id2, configured to subscribe for changes on properties marked with [MonitorChanges] attribute (strict mode)
 var id2_Strict = ChangesMonitor.Create(id: "Id2", monitorOnlyMarkedProperties: true);
 ```
 
