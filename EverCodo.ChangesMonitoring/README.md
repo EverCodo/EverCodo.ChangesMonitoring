@@ -21,12 +21,12 @@ public class Metadata : INotifyPropertyChanged
     public ObservableCollection<string> Tags { get; set; }
 }
 
-public class File : EntityInfo
+public class File : Entity
 {
     public int Size { get; set; }
 }
 
-public class Folder : EntityInfo
+public class Folder : Entity
 {
     public ObservableCollection<Entity> Children { get; set; }
 }
@@ -44,7 +44,7 @@ public class Tree
         _ChangesMonitor.Changed += ChangesMonitor_Changed;
     }
 
-    public FolderInfo Root { get; }
+    public Folder Root { get; }
        
     public string IsDirty { get; private set; }
     
